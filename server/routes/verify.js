@@ -9,7 +9,6 @@ const axios = require("axios");
 const PATHS = {
   AGE: "/age-verify",
   AGE_LIVENESS: "/age-antispoofing-verify",
-  AL2: "/age-antispoofing"
 };
 
 // Pass db as a parameter when importing this router
