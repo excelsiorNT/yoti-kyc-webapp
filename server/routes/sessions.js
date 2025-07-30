@@ -29,8 +29,8 @@ module.exports = (db) => {
           "preset_issuing_country": "GBR"
       },
       "age_estimation": {
-          "allowed": true,
-          "threshold": 12,
+          "allowed": false,
+          "threshold": 18,
           "level": "PASSIVE",
           "retry_limit": 1
       },
