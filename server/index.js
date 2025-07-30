@@ -37,6 +37,11 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 app.use(bodyParser.json({limit: '50mb'}));
 
+// API Routes
+const registerRoute = require('./routes/users')(db);
+
+app.use('/api/users', registerRoute);
+
 // Serve static files (build directory) from the React app
 app.use(express.static(path.join(__dirname, '../build/client')));
 app.get('*', (req, res) => {
