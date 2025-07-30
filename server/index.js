@@ -29,6 +29,7 @@ db.run(`
     password TEXT,
     sesson_id TEXT,
     is_verified BOOLEAN DEFAULT 0
+    session_expires_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )
 `);
 
