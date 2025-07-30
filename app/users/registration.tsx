@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router";
 import {
   Box,
   Button,
@@ -9,6 +10,7 @@ import {
   Paper,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useLocalStorage } from "react-use";
 
 export default function Registration() {
   const [showPassword, setShowPassword] = useState(false);
@@ -17,17 +19,49 @@ export default function Registration() {
     email: "",
     password: "",
   });
+  const [user, setUser, removeUser] = useLocalStorage('user', '');
+  const [verified, setVerified, removeVerified] = useLocalStorage('verified', false);
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleClickShowPassword = () => {
+    setShowPassword((show) => !show)
+  };
+  
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle sign-up logic here
-    alert(JSON.stringify(form, null, 2));
+    try {
+      // Handle sign-up logic here
+      // Optionally store user info
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: form.username,
+          email: form.email,
+          password: form.password
+        })
+      })
+
+      const data = await response.json();
+
+      setUser(form.username);
+      setVerified(false);
+      console.log(data);
+      if (response.status === 200) 
+        navigate("/verify");
+      else {
+        alert(data.error || "Registration failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during registration:", error);
+      alert("Registration failed. Please try again.");
+    }
   };
 
   return (
@@ -38,11 +72,11 @@ export default function Registration() {
       minHeight="100vh"
       bgcolor="#f5f5f5"
     >
-      <Paper elevation={3} sx={{ p: 4, minWidth: 350 }}>
+      <Paper elevation={3} sx={{ p: 2, minWidth: 350 }}>
         <Typography variant="h5" mb={2} align="center">
-          Sign Up
+          Create an Account
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} noValidate>
+        <Box component="form" onSubmit={handleSubmit}>
           <TextField
             margin="normal"
             fullWidth
