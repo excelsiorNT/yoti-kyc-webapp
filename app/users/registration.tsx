@@ -8,9 +8,14 @@ import {
   InputAdornment,
   IconButton,
   Paper,
+  Avatar,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useLocalStorage } from "react-use";
+
+// Yoti blue and style constants
+const YOTI_BLUE = "#012169";
+const YOTI_LIGHT = "#f5f8fa";
 
 export default function Registration() {
   const [showPassword, setShowPassword] = useState(false);
@@ -34,8 +39,6 @@ export default function Registration() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Handle sign-up logic here
-      // Optionally store user info
       const response = await fetch('/api/users', {
         method: 'POST',
         headers: {
@@ -52,7 +55,6 @@ export default function Registration() {
 
       setUser(form.username);
       setVerified(false);
-      console.log(data);
       if (response.status === 200) 
         navigate("/verify");
       else {
@@ -70,13 +72,37 @@ export default function Registration() {
       justifyContent="center"
       alignItems="center"
       minHeight="100vh"
-      bgcolor="#f5f5f5"
+      bgcolor={YOTI_LIGHT}
     >
-      <Paper elevation={3} sx={{ p: 2, minWidth: 350 }}>
-        <Typography variant="h5" mb={2} align="center">
-          Create an Account
+      <Paper
+        elevation={6}
+        sx={{
+          p: { xs: 2, sm: 4 },
+          minWidth: { xs: 320, sm: 400 },
+          borderRadius: 4,
+          boxShadow: "0 8px 32px 0 rgba(1,33,105,0.10)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Typography
+          variant="h5"
+          mb={1}
+          align="center"
+          sx={{ fontWeight: 700, color: YOTI_BLUE, letterSpacing: 1 }}
+        >
+          Create your SocialYoti Account
         </Typography>
-        <Box component="form" onSubmit={handleSubmit}>
+        <Typography
+          variant="body2"
+          mb={3}
+          align="center"
+          sx={{ color: "#555" }}
+        >
+          Sign up to connect with real users.
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit} width="100%">
           <TextField
             margin="normal"
             fullWidth
@@ -85,6 +111,10 @@ export default function Registration() {
             value={form.username}
             onChange={handleChange}
             required
+            autoComplete="username"
+            InputProps={{
+              sx: { borderRadius: 2, bgcolor: "#fff" }
+            }}
           />
           <TextField
             margin="normal"
@@ -95,6 +125,10 @@ export default function Registration() {
             value={form.email}
             onChange={handleChange}
             required
+            autoComplete="email"
+            InputProps={{
+              sx: { borderRadius: 2, bgcolor: "#fff" }
+            }}
           />
           <TextField
             margin="normal"
@@ -105,7 +139,9 @@ export default function Registration() {
             value={form.password}
             onChange={handleChange}
             required
+            autoComplete="new-password"
             InputProps={{
+              sx: { borderRadius: 2, bgcolor: "#fff" },
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
@@ -123,7 +159,17 @@ export default function Registration() {
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 2 }}
+            sx={{
+              mt: 3,
+              py: 1.5,
+              fontWeight: 700,
+              fontSize: "1rem",
+              background: YOTI_BLUE,
+              borderRadius: 2,
+              textTransform: "none",
+              boxShadow: "0 2px 8px 0 rgba(1,33,105,0.10)",
+              ":hover": { background: "#003087" }
+            }}
           >
             Sign Up
           </Button>
