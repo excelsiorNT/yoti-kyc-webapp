@@ -39,8 +39,12 @@ app.use(bodyParser.json({limit: '50mb'}));
 
 // API Routes
 const registerRoute = require('./routes/users')(db);
+const verifyRoute = require('./routes/verify')(db);
+const sessionRoute = require('./routes/sessions')(db);
 
 app.use('/api/users', registerRoute);
+app.use('/api/verify', verifyRoute)
+app.use('/api/sessions', sessionRoute);
 
 // Serve static files (build directory) from the React app
 app.use(express.static(path.join(__dirname, '../build/client')));
