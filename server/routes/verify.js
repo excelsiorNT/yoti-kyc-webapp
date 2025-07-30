@@ -27,7 +27,7 @@ module.exports = (db) => {
       .withEndpoint(PATHS.AGE_LIVENESS)
       .withPayload(new Payload(data))
       .withMethod('POST')
-      .withHeader('X-Yoti-Auth-Id', process.env.YOTI_CLIENT_SDK_ID)
+      .withHeader('X-Yoti-Auth-Id', process.env.VITE_SDK_ID)
       .build();
     const response = await request.execute();
     
@@ -38,7 +38,7 @@ module.exports = (db) => {
     const headers = {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${process.env.YOTI_API_KEY}`,
-      'Yoti-Sdk-Id': process.env.WEB_SDK_ID
+      'Yoti-Sdk-Id': process.env.VITE_WEB_SDK_ID
     }
 
     const config = {

@@ -10,7 +10,7 @@ module.exports = (db) => {
     const headers = {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${process.env.YOTI_API_KEY}`,
-      'Yoti-Sdk-Id': process.env.WEB_SDK_ID
+      'Yoti-Sdk-Id': process.env.VITE_WEB_SDK_ID
     }
 
     const payload = {
@@ -67,7 +67,7 @@ module.exports = (db) => {
       console.log(JSON.stringify(response.data));
       const data = {
         ...response.data,
-        url: `${process.env.API_ENDPOINT}/age-estimation?sessionId=${response.data.id}&sdkId=${process.env.WEB_SDK_ID}`
+        url: `${process.env.API_ENDPOINT}/age-estimation?sessionId=${response.data.id}&sdkId=${process.env.VITE_WEB_SDK_ID}`
       }
       res.json(data);
     })
