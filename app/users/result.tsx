@@ -1,25 +1,25 @@
 import React, { useEffect, useRef } from "react";
-import { Box, Button, Paper, Typography, Avatar } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import { useLocalStorage } from "react-use";
-import { useNavigate } from "react-router";
 
 // Yoti blue and style constants
 const YOTI_BLUE = "#012169";
 const YOTI_LIGHT = "#f5f8fa";
 
 interface ResultProps {
-  username: string;
+  user_id: string;
 }
 
-export default function Result({ username }: ResultProps) {
+export default function Result({ user_id }: ResultProps) {
   const [user, setUser, removeUser] = useLocalStorage('user', '');
   const [verified, setVerified, removeVerified] = useLocalStorage('verified', false);
   const [session, setSession, removeSession] = useLocalStorage('session', '');
+  const [expire, setExpire, removeExpire] = useLocalStorage('expire', new Date().toISOString());
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
+    // Fetch verification result using Yoti Get Results API
     const fetchResult = async () => {
       try {
         const response = await fetch(`/api/verify?sessionId=${session}`, {
@@ -27,7 +27,9 @@ export default function Result({ username }: ResultProps) {
           headers: { 'Content-Type': 'application/json' }
         });
         const result = await response.json();
-        if (result === "COMPLETE") {
+        // Check if the result is complete and update state
+        if (result.status === true) {
+          // Set verified to true and clear the interval
           setVerified(true);
           removeSession();
         }
@@ -36,19 +38,28 @@ export default function Result({ username }: ResultProps) {
       }
     };
 
-    fetchResult(); // initial call
-
-    if (!verified && session) {
+    // Check if user is already verified or session is valid
+    let expireDate = expire || new Date().toISOString();
+    if (!verified && session && expireDate > new Date().toISOString()) {
+      fetchResult(); // initial call
       intervalRef.current = setInterval(fetchResult, 10000); // every 10 seconds
     }
 
+    // Cleanup function to clear the interval
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [verified, session, setVerified, removeSession]);
 
+  // Function to handle verification button click
   const onVerify = async () => {
-    if (session) {
+    let expireDate = expire || new Date().toISOString();
+
+    // If session exists and not expired, redirect to already given Yoti service URL
+    if (session && expireDate > new Date().toISOString()) {
+      alert("session still valid");
+
+      // Redirect to Yoti service URL
       window.location.href = `https://age.yoti.com/age-estimation?sessionId=${session}&sdkId=${import.meta.env.VITE_WEB_SDK_ID}`;
     } else {
       try {
@@ -58,11 +69,16 @@ export default function Result({ username }: ResultProps) {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            username: user
+            user_id: user
           }),
         });
         const data = await response.json();
+
+        // Store session ID and expiration date in local storage
         setSession(data.id);
+        setExpire(data.expires_at);
+
+        // Redirect to Yoti service URL
         window.location.href = data.url;
       } catch (error) {
         console.error("Error during verification:", error);
@@ -106,15 +122,16 @@ export default function Result({ username }: ResultProps) {
           sx={{ color: "#555" }}
         >
           {verified
-            ? "Your identity has been successfully verified. Welcome to SocialYoti!"
-            : "Your account verification is not complete. Please verify your account to continue."}
+            ? "Your identity has been successfully verified."
+            : "You look younger than our minimum age requirement."}
+          <br />
+          {verified
+            ? "When your account is ready, you will receive an email with further instructions."
+            : "To proceed, please verify using an alternative method below."}
         </Typography>
         <Box mb={2} width="100%">
           <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-            Username: <span style={{ fontWeight: 400 }}>{user}</span>
-          </Typography>
-          <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-            Account Verification:{" "}
+            Verification Status:{" "}
             <span style={{ fontWeight: 400 }}>
               {verified ? "Completed" : "Pending"}
             </span>
@@ -134,7 +151,7 @@ export default function Result({ username }: ResultProps) {
               mt: 1,
             }}
           >
-            Verify Account with ID
+            Verify Account with Alternative Method
           </Button>
         )}
       </Paper>

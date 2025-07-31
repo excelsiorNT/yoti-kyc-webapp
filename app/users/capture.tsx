@@ -4,7 +4,6 @@ import {
   Button,
   Typography,
   Paper,
-  Avatar,
 } from "@mui/material";
 import { useLocalStorage } from "react-use";
 import { useNavigate } from "react-router";
@@ -18,6 +17,7 @@ export function CaptureImage() {
   const [verified, setVerified] = useLocalStorage('verified', false);
   const navigate = useNavigate();
 
+  // Function to handle successful image capture
   const onSuccess = async (payload: { img: string }, base64PreviewImage?: string) => { 
     const response = await fetch('/api/verify', {
       method: 'POST',
@@ -26,19 +26,21 @@ export function CaptureImage() {
       },
       body: JSON.stringify({
         img: payload.img,
+        user_id: user
       }),
     });
     const data = await response.json();
-    setVerified(data.age.age_check === "pass" && data.antispoofing.prediction === "true");
-    navigate("/result", { state: { username: user, kycResult: data.age.age_check } });
-    console.log(data);
+    setVerified(data.result);
+    navigate("/result", { state: { user_id: user, kycResult: data.result } });
   };
 
+  // Function to handle back button click
   const onBack = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     window.history.back();
   };
 
+  // Function to handle errors during image capture
   const onError = (error: any) => console.log(error);
 
   return (
@@ -76,8 +78,11 @@ export function CaptureImage() {
           sx={{ color: "#555" }}
         >
           To ensure a safe and authentic community, we require all new users to prove their age during registration.
+          <br />
+          Only users aged 18 and above can register. If we estimate you to be under 18, alternative verification methods will be required.
         </Typography>
         <Box width="100%" mb={2} maxWidth={550}>
+          {/* Capture the user's face image using Yoti's FaceCapture component */}
           <FaceCapture
             clientSdkId={import.meta.env.VITE_SDK_ID}
             returnPreviewImage={true}

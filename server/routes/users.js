@@ -2,11 +2,14 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 
-// Pass db as a parameter when importing this router
 module.exports = (db) => {
+  // Endpoint to register a new user
   router.post('/', (req, res) => {
     const { username, email, password } = req.body;
+    // Hash the password before storing it
     const hash = bcrypt.hashSync(password, 10);
+
+    // Add a new user to the database
     db.run(
       'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
       [username, email, hash],

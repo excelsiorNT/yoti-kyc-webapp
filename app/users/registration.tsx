@@ -8,7 +8,6 @@ import {
   InputAdornment,
   IconButton,
   Paper,
-  Avatar,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useLocalStorage } from "react-use";
@@ -53,7 +52,7 @@ export default function Registration() {
 
       const data = await response.json();
 
-      setUser(form.username);
+      setUser(data.id);
       setVerified(false);
       if (response.status === 200) 
         navigate("/verify");
