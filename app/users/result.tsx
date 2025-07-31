@@ -57,8 +57,6 @@ export default function Result({ user_id }: ResultProps) {
 
     // If session exists and not expired, redirect to already given Yoti service URL
     if (session && expireDate > new Date().toISOString()) {
-      alert("session still valid");
-
       // Redirect to Yoti service URL
       window.location.href = `https://age.yoti.com/age-estimation?sessionId=${session}&sdkId=${import.meta.env.VITE_WEB_SDK_ID}`;
     } else {
