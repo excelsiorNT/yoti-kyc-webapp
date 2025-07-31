@@ -48,14 +48,14 @@ module.exports = (db) => {
       // Set the session expiry time to 1 hour
       "ttl": 3600,
       "callback": {
-          "url":"https://localhost:3000/result",
+          "url":`https://localhost:${process.env.PORT}/result`,
           "auto": true
       },
-      "cancel_url": "https://localhost:3000/result",
+      "cancel_url": `https://localhost:${process.env.PORT}/result`,
       "login": {
           "allowed": true
       },
-      "notification_url": "https://localhost:3000/result",
+      "notification_url": `https://localhost:${process.env.PORT}/result`,
       "block_biometric_consent": false,
       // Enable retry and resume for the session
       "retry_enabled": true,
