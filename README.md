@@ -20,8 +20,7 @@ This project features a React 18 frontend styled with Material-UI and a Node.js/
 ## Prerequisites
 
 - **Node.js** v20 or higher
-- **npm** (comes with Node.js)
-- **Yarn** (optional)
+- **Yarn** 
 - **Yoti API credentials** (SDK ID, API Key, PEM file)
 
 ---
